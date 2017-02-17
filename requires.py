@@ -18,8 +18,8 @@ from charms.reactive import RelationBase
 from charms.reactive import scopes
 
 
-class HttpRequires(RelationBase):
-    scope = scopes.UNIT
+class LimeDSRequires(RelationBase):
+    scope = scopes.GLOBAL
 
     @hook('{requires:limeds}-relation-{joined,changed}')
     def changed(self):
@@ -35,24 +35,6 @@ class HttpRequires(RelationBase):
         conv.remove_state('{relation_name}.available')
 
     @property
-    def units(self):
-        """
-        Returns a list of available limeds services and their associated hosts
-        and ports.
-
-        The return value is a list of dicts of the following form::
-
-            [
-                {
-                    'url': <base url of limeds instance>,
-                },
-                # ...
-            ]
-        """
-        services = []
-        for conv in self.conversations():
-            services.append(
-                {
-                    "url": conv.get_remote('url'),
-                })
-        return services
+    def url(self):
+        conv = self.conversation()
+        return conv.get_remote('url')
